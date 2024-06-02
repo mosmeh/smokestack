@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -euo pipefail
+
+function run() {
+	cargo r -p smokestack-cli -- "$@"
+}
+
+rm -f state.json "$HOME/.smokestack/token" alice.token bob.token charlie.token
+
+run auth --username alice
+mv "$HOME/.smokestack/token" alice.token
+run auth --username bob
+mv "$HOME/.smokestack/token" bob.token
+run auth --username charlie
+mv "$HOME/.smokestack/token" charlie.token
+
+cp alice.token "$HOME/.smokestack/token"
+run component create foo --description 'foo service' --owners alice bob
+run tag create deploy --description 'Deployments'
+run tag create security --description 'Security enhancements'
+run tag create dev --description 'Related to developers'
+
+run create -f - <<EOS
+title: Update kernel of machines for foo service
+purpose: To mitigate the security vulnerability CVE-1234-5678
+url: https://ghe.example.com/sre/foo-ops/pull/1234
+components: [foo]
+tags: [security]
+EOS
+run list
+run show 1234
+
+run start 1234
+run complete 1234
+
+run component create bar --description 'bar service' --owners charlie
+
+cp bob.token "$HOME/.smokestack/token"
+run create -f - <<EOS
+title: Deploy new version of foo and bar services
+purpose: To enable new features and fix bugs
+url: https://ghe.example.com/dev/monorepo/pull/5678
+components: [foo, bar]
+tags: [deploy, dev]
+annotations:
+  ticket: DEV-1234
+  service-impact: possible downtime in case of rollback
+EOS
+
+run list --component foo
+run list --component bar
+
+cp alice.token "$HOME/.smokestack/token"
+run subscribe --component foo
+run subscribe --tag security
+run subscribe --list

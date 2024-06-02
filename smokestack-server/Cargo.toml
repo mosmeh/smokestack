@@ -1,0 +1,38 @@
+[package]
+name = "smokestack-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.86"
+axum = { version = "0.7.5", features = ["ws"] }
+axum-extra = { version = "0.9.3", features = ["query", "typed-header"] }
+clap = { version = "4.5.4", features = ["derive"] }
+jsonwebtoken = "9.3.0"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.117"
+smokestack = { path = "../smokestack" }
+thiserror = "1.0.61"
+tokio = { version = "1.38.0", features = ["full"] }
+tower-http = { version = "0.5.2", features = ["trace"] }
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+
+[lints.clippy]
+nursery = "warn"
+missing_const_for_fn = { level = "allow", priority = 1 }
+significant_drop_in_scrutinee = { level = "allow", priority = 1 }
+significant_drop_tightening = { level = "allow", priority = 1 }
+
+pedantic = "warn"
+cast_possible_truncation = { level = "allow", priority = 1 }
+cast_possible_wrap = { level = "allow", priority = 1 }
+cast_precision_loss = { level = "allow", priority = 1 }
+cast_sign_loss = { level = "allow", priority = 1 }
+missing_errors_doc = { level = "allow", priority = 1 }
+missing_panics_doc = { level = "allow", priority = 1 }
+module_name_repetitions = { level = "allow", priority = 1 }
+must_use_candidate = { level = "allow", priority = 1 }
+needless_pass_by_value = { level = "allow", priority = 1 }
+struct_field_names = { level = "allow", priority = 1 }
+too_many_lines = { level = "allow", priority = 1 }
